@@ -1,34 +1,51 @@
 // Copyright 2022 NNTU-CS
 #ifndef INCLUDE_TPQUEUE_H_
 #define INCLUDE_TPQUEUE_H_
+#include <stdexcept>
 
 template<typename T>
 class TPQueue {
  private:
-static const int MAX_SIZE = 100;
-T data[MAX_SIZE];
-int size;
+struct Item {
+  T data;
+  Item* next;
+  Item(const T& value) : data(value), next(nullptr) {}
+};
+Item* head;
 
  public:
-TPQueue() : size(0) {}
+TPQueue() : head(nullptr) {}
 void push(const T& value) {
-    int pos = 0;
-    while (pos < size && data[pos].prior >= value.prior)
-        pos++;
-    for (int i = size; i > pos; i--)
-        data[i] = data[i-1];
-    data[pos] = value;
-    size++;
+Item* newItem = new Item(value);
+if (head == nullptr || value.prior > head->data.prior) {
+    newItem->next = head;
+    head = newItem;
+    return;
+}
+Item* current = head;
+while (current->next != nullptr && current->next->data.prior >= value.prior) {
+    current = current->next;
+}
+newItem->next = current->next;
+current->next = newItem;
 }
 T pop() {
-    T result = data[0];
-    for (int i = 0; i < size - 1; i++) {
-        data[i] = data[i+1];
-    }
-    size--;
-    return result;
+if (head == nullptr)
+    throw std::string("Queue is empty");
+Item* temp = head;
+T result = temp->data;
+head = head->next;
+delete temp;
+return result;
 }
+~TPQueue() {
+while (head != nullptr) {
+  Item* temp = head;
+  head = head->next;
+  delete temp;
+}}
 };
+
 struct SYM {
   char ch;
   int prior;
