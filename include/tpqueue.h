@@ -4,12 +4,12 @@
 
 template<typename T>
 class TPQueue {
-    private:
+ private:
 static const int MAX_SIZE = 100;
 T data[MAX_SIZE];
 int size;
 
-    public:
+ public:
 TPQueue() : size(0) {}
 void push(const T& value) {
     int pos = 0;
